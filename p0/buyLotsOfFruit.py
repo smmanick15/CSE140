@@ -12,7 +12,7 @@ the script should produce the output:
 
 Cost of [('apples', 2.0), ('pears', 3.0), ('limes', 4.0)] is 12.25
 """
-
+   
 FRUIT_PRICES = {
     'apples': 2.00,
     'oranges': 1.50,
@@ -28,8 +28,8 @@ def buyLotsOfFruit(orderList):
     Returns cost of order
     """
 
-    i = 0
-    order_cost = 0.0
+    i = 0                   # to track iterations in fruit list
+    order_cost = 0.0        # to track cost of fruit
 
     while i < len(orderList):
         if orderList[i][0] in FRUIT_PRICES:

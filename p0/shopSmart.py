@@ -21,53 +21,40 @@ def shopSmart(orderList, fruitShops):
 
     # *** Your Code Here ***
 
-    print(type(fruitShops[0]))
-    best_shop = fruitShops[0]
-    print("here we are testing the variable::: ------->", best_shop.name)
-
+    
     i = 0
-    lowest_cost = 0
-    best_shop = fruitShops[0]
-
-    current_cost = 0
-    current_shop = fruitShops[0]
+    lowest_cost = 0             # tracks value of lowest cost total
+    best_shop = fruitShops[0]   # contains fruit shop with lowest cost
 
     while i < len(fruitShops):
         j = 0
+        current_cost = 0
+        current_shop = fruitShops[i]
+        #print("currently we are calculating the total cost at: ", fruitShops[i].name, "for the list: ", orderList)
+        
+        #this while loop calculates the total cost of the fruit in the list at the current shop
         while j < len(orderList):
-            print("printing inside loop")
-            print(orderList[j])
+            #print("calculating the cost of the first fruit in the list:")
+            fruit_cost = orderList[j][1] * fruitShops[i].fruitPrices[orderList[j][0]]
+            #print("the cost for this iteration of fruit is: $", fruit_cost)
+            current_cost = current_cost + (orderList[j][1] * fruitShops[i].fruitPrices[orderList[j][0]])
+            #print("current total cost: $", current_cost)
             j = j+1
-        #for fruit in orderList:
-            #print(orderList([fruit]))
-            #current_cost = current_cost + ((fruitShops[i].fruitPrices(orderList[fruit][1]))* (orderList[fruit][1]))
-        #print("the current cost for: ", fruitShops[i].name, "is: $", current_cost)
 
+        #the following logic sequence compares the current cost to the lowest cost shop
+        if (current_cost < lowest_cost):
+            lowest_cost = current_cost
+            best_shop = current_shop
+        
+        if (lowest_cost == 0):      #if this is the first shop iteration in the loop
+            lowest_cost = current_cost
+            best_shop = current_shop
+        
+        
         i=i+1
-
-    #print(orderList)
-    #print(type(fruitShops[0].fruitPrices))
-    #print(orderList[0][0])
-    #if orderList[0][0] in fruitShops[0].fruitPrices:
-    #    print("fruit price found: $", fruitShops[0].fruitPrices[orderList[0][0]])
-    #else:
-    #    print("fruit price not found")
-
-
-    '''i = 0
-    order_cost = 0.0
-
-    while i < len(orderList):
-        if orderList[i][0] in FRUIT_PRICES:
-            order_cost = order_cost + (orderList[i][1] * (FRUIT_PRICES[orderList[i][0]]))
-        else:
-            print("You are trying to buy fruit that this store doesn't sell... Please try your local Farmers Market!")
-            return None
-        i = i+1
-
-    return order_cost'''   
+   
     
-    return fruitShops[0]
+    return best_shop
 
 def main():
     dir1 = {
