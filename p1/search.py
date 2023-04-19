@@ -44,8 +44,8 @@ def depthFirstSearch(problem):
         if (curr_state not in visited):
             visited.append(curr_state)
             success_len = len(problem.successorStates(curr_state))
-            for i in range(success_len, 0, -1):              
-                child_node = problem.successorStates(curr_state)[i-1]
+            for i in range(success_len):              
+                child_node = problem.successorStates(curr_state)[i]
                 child_state = child_node[0]
                 if (child_state not in visited):
                     fringe.push(child_node)
@@ -65,10 +65,8 @@ def depthFirstSearch(problem):
                     actions.append(compare_node[1])
                 break
 
-        
-    #print(actions)
+    
     actions.reverse()
-    #print(actions)
     return actions
 
     #raise NotImplementedError()
