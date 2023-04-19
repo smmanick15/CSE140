@@ -21,20 +21,62 @@ def depthFirstSearch(problem):
     ```
     """
 
-    
     # *** Your Code Here ***
-    raise NotImplementedError()
+
+    start_node = (problem.startingState(), '', 0)
+    fringe = Stack()
+    fringe.push(start_node)
+    
+    recentNodes = Stack()
+    recentNodes.push(start_node)
+
+    if (problem.isGoal(problem.startingState())):
+        return
+    
+    visited = []
+
+    while (fringe.__len__() != 0):
+        curr_node = fringe.pop()
+        curr_state = curr_node[0]
+        if (problem.isGoal(curr_state)):
+            recentNodes.push(curr_node)
+            break
+        if (curr_state not in visited):
+            visited.append(curr_state)
+            success_len = len(problem.successorStates(curr_state))
+            for i in range(success_len, 0, -1):              
+                child_node = problem.successorStates(curr_state)[i-1]
+                child_state = child_node[0]
+                if (child_state not in visited):
+                    fringe.push(child_node)
+                    recentNodes.push(child_node)
+
+    back_state = curr_state
+    actions = []
+
+    while (back_state != problem.startingState()):
+        compare_node = recentNodes.pop()
+        if (back_state == compare_node[0]):
+            actions.append(compare_node[1])
+        for child in problem.successorStates(back_state):
+            if (child[0] == compare_node[0]):
+                back_state = compare_node[0]
+                if (compare_node[1] != ''):
+                    actions.append(compare_node[1])
+                break
+
+        
+    #print(actions)
+    actions.reverse()
+    #print(actions)
+    return actions
+
+    #raise NotImplementedError()
 
 def breadthFirstSearch(problem):
     """
     Search the shallowest nodes in the search tree first. [p 81]
     """
-
-    # print("Start: %s" % (str(problem.startingState())))
-    # print("Is the start a goal?: %s" % (problem.isGoal(problem.startingState())))
-    # print("Start's successors: %s" % (problem.successorStates(problem.startingState())))
-    # print(problem.successorStates(problem.startingState()))
-
     # *** Your Code Here ***
 
     start_node = (problem.startingState(), '', 0)
