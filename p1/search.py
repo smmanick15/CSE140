@@ -24,32 +24,32 @@ def depthFirstSearch(problem):
     # *** Your Code Here ***
     start_node = (problem.startingState(), '', 0)
     fringe = Stack()
-    fringe.push(start_node)
-    if (problem.isGoal(problem.startingState())):
+    fringe.push(start_node)   # initialize fringe with start node
+    if (problem.isGoal(problem.startingState())):   # check if start is goal
         return
     visited = []
-    while (fringe.__len__() != 0):
+    while (fringe.__len__() != 0):   # while fringe not empty, traverse through graph
         curr_node = fringe.pop()
         curr_state = curr_node[0]
-        if (problem.isGoal(curr_state)):
+        if (problem.isGoal(curr_state)):   # if state is goal, return path list
             tuple_result = tuple(map(str, curr_node[1].split(' ')))
-            end_list = []
+            path_list = []
             for i in tuple_result:
                 if (i != ''):
-                    end_list.append(i)
-            return end_list
-        if (curr_state not in visited):
-            visited.append(curr_state)
+                    path_list.append(i)
+            return path_list
+        if (curr_state not in visited):   # if state is new:
+            visited.append(curr_state)    # add to visited nodes list
             for child_node in problem.successorStates(curr_state):
                 child_state = child_node[0]
                 child_node = list(child_node)
-                if (child_state not in visited):
+                if (child_state not in visited):   # if child is new:
                     if (curr_node[1] != ''):
                         new_path = str(curr_node[1])
                         new_move = str(child_node[1])
                         new_path += ' ' + new_move
                         child_node[1] = new_path
-                    fringe.push(child_node)
+                    fringe.push(child_node)   # push child to fringe
 
 def breadthFirstSearch(problem):
     """
@@ -70,21 +70,21 @@ def breadthFirstSearch(problem):
             child_state = child_node[0]
             if problem.isGoal(child_state):  # if child state is goal, add child to visited
                 tuple_result = tuple(map(str, curr_node[1].split(' ')))
-                end_list = []
+                path_list = []
                 for i in tuple_result:
                     if (i != ''):
-                        end_list.append(i)
-                end_list.append(child_node[1])
-                return end_list
+                        path_list.append(i)
+                path_list.append(child_node[1])
+                return path_list
             else:                  # if child is not goal, append child if not seen before
-                if (child_state not in visited):
+                if (child_state not in visited):   # if child is new:
                     if (curr_node[1] != ''):
                         new_path = str(curr_node[1])
                         new_move = str(child_node[1])
                         new_path += ' ' + new_move
                         child_node[1] = new_path
                     visited.append(child_state)
-                    fringe.push(child_node)
+                    fringe.push(child_node)   # push child to fringe
     # raise NotImplementedError()
 
 def uniformCostSearch(problem):
