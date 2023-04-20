@@ -22,54 +22,34 @@ def depthFirstSearch(problem):
     """
 
     # *** Your Code Here ***
-
     start_node = (problem.startingState(), '', 0)
     fringe = Stack()
     fringe.push(start_node)
-    
-    recentNodes = Stack()
-    recentNodes.push(start_node)
-
     if (problem.isGoal(problem.startingState())):
         return
-    
     visited = []
-
     while (fringe.__len__() != 0):
         curr_node = fringe.pop()
         curr_state = curr_node[0]
         if (problem.isGoal(curr_state)):
-            recentNodes.push(curr_node)
-            break
+            tuple_result = tuple(map(str, curr_node[1].split(' ')))
+            end_list = []
+            for i in tuple_result:
+                if (i != ''):
+                    end_list.append(i)
+            return end_list
         if (curr_state not in visited):
             visited.append(curr_state)
-            success_len = len(problem.successorStates(curr_state))
-            for i in range(success_len):              
-                child_node = problem.successorStates(curr_state)[i]
+            for child_node in problem.successorStates(curr_state):
                 child_state = child_node[0]
+                child_node = list(child_node)
                 if (child_state not in visited):
+                    if (curr_node[1] != ''):
+                        new_path = str(curr_node[1])
+                        new_move = str(child_node[1])
+                        new_path += ' ' + new_move
+                        child_node[1] = new_path
                     fringe.push(child_node)
-                    recentNodes.push(child_node)
-
-    back_state = curr_state
-    actions = []
-
-    while (back_state != problem.startingState()):
-        compare_node = recentNodes.pop()
-        if (back_state == compare_node[0]):
-            actions.append(compare_node[1])
-        for child in problem.successorStates(back_state):
-            if (child[0] == compare_node[0]):
-                back_state = compare_node[0]
-                if (compare_node[1] != ''):
-                    actions.append(compare_node[1])
-                break
-
-    
-    actions.reverse()
-    return actions
-
-    #raise NotImplementedError()
 
 def breadthFirstSearch(problem):
     """
@@ -78,52 +58,33 @@ def breadthFirstSearch(problem):
     # *** Your Code Here ***
 
     start_node = (problem.startingState(), '', 0)
-    frontier = Queue()
-    frontier.push(start_node)        # initialize queue with start node
-    
-    reached = []          # initialize list to check whether states have been visited    
-    reached.append(problem.startingState()) # initialize list with starting state
-    recentNodes = Stack()   # initialize stack used to track nodes from goal state to origin state
-    recentNodes.push(start_node)
-    foundGoal = False
-
-    while not frontier.isEmpty():       # while fringe is not empty, do the following
-        node = frontier.pop()
-        state = node[0]
-        for child in problem.successorStates(state):    # check each child node of parent node
-            goal = child
-            childState = child[0]
-            if problem.isGoal(childState):     # if child state is goal, push child to visited nodes stack and break
-                recentNodes.push(child)
-                foundGoal = True
-                break
-            else:                              # if child is not goal, append child if it is a new state (not seen before)
-                if (childState not in reached):
-                    reached.append(childState)
-                    frontier.push(child)
-                    recentNodes.push(child)
-        if (foundGoal == True):
-            break
-
-    back_state = childState        
-    actions = []                    # list of actions to return
-    
-    while (back_state != problem.startingState()):  # while the current state is not the origin, do:
-        compare_node = recentNodes.pop()
-        if (back_state == compare_node[0]):         # if current state is the last node visited, add action
-            actions.append(compare_node[1])
-        found_next = False
-        for child in problem.successorStates(back_state):
-            if (child[0] == compare_node[0]):       # check if successor state is valid
-                back_state = compare_node[0]        # if valid, set current state to successor state
-                if (compare_node[1] != ''):         # add action to list of results
-                    actions.append(compare_node[1])
-                found_next = True
-                break
-    
-    actions.reverse()               # reverse order of action steps
-    return actions
-
+    fringe = Queue()
+    fringe.push(start_node)        # initialize queue with start node
+    visited = []          # initialize list to check whether states have been visited
+    visited.append(problem.startingState())   # initialize list with starting state
+    while not fringe.isEmpty():       # while fringe is not empty, do the following
+        curr_node = fringe.pop()
+        curr_state = curr_node[0]
+        for child_node in problem.successorStates(curr_state):    # check each child
+            child_node = list(child_node)
+            child_state = child_node[0]
+            if problem.isGoal(child_state):  # if child state is goal, add child to visited
+                tuple_result = tuple(map(str, curr_node[1].split(' ')))
+                end_list = []
+                for i in tuple_result:
+                    if (i != ''):
+                        end_list.append(i)
+                end_list.append(child_node[1])
+                return end_list
+            else:                  # if child is not goal, append child if not seen before
+                if (child_state not in visited):
+                    if (curr_node[1] != ''):
+                        new_path = str(curr_node[1])
+                        new_move = str(child_node[1])
+                        new_path += ' ' + new_move
+                        child_node[1] = new_path
+                    visited.append(child_state)
+                    fringe.push(child_node)
     # raise NotImplementedError()
 
 def uniformCostSearch(problem):
