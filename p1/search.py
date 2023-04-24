@@ -1,5 +1,6 @@
 from pacai.util.stack import Stack
 from pacai.util.queue import Queue
+from pacai.util.priorityQueue import PriorityQueue
 
 """
 In this file, you will implement generic search algorithms which are called by Pacman agents.
@@ -93,6 +94,39 @@ def uniformCostSearch(problem):
     """
 
     # *** Your Code Here ***
+    start_node = (problem.startingState(), '', 0)
+    fringe = PriorityQueue()
+    fringe.push(start_node, 1)        # initialize queue with start node
+    visited = []          # initialize list to check whether states have been visited
+    visited.append(problem.startingState())   # initialize list with starting state
+    while not fringe.isEmpty():       # while fringe is not empty, do the following
+        curr_node = fringe.pop()
+        curr_state = curr_node[0]
+        for child_node in problem.successorStates(curr_state):    # check each child
+            child_node = list(child_node)
+            child_state = child_node[0]
+            if problem.isGoal(child_state):  # if child state is goal, add child to visited
+                tuple_result = tuple(map(str, curr_node[1].split(' ')))
+                path_list = []
+                for i in tuple_result:
+                    if (i != ''):
+                        path_list.append(i)
+                path_list.append(child_node[1])
+                return path_list
+            else:                  # if child is not goal, append child if not seen before
+                if (child_state not in visited):   # if child is new:
+                    if (curr_node[1] != ''):
+                        new_path = str(curr_node[1])
+                        new_move = str(child_node[1])
+                        new_path += ' ' + new_move
+                        child_node[1] = new_path
+                    child_node[2] = child_node[2] + 1
+                    visited.append(child_state)
+                    fringe.push(child_node, child_node[2])   # push child to fringe
+
+    empty_list = []
+    return empty_list
+
     raise NotImplementedError()
 
 def aStarSearch(problem, heuristic):
