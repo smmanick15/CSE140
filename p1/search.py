@@ -60,33 +60,31 @@ def breadthFirstSearch(problem):
 
     start_node = (problem.startingState(), '', 0)
     fringe = Queue()
-    fringe.push(start_node)        # initialize queue with start node
-    visited = []          # initialize list to check whether states have been visited
-    visited.append(problem.startingState())   # initialize list with starting state
-    while not fringe.isEmpty():       # while fringe is not empty, do the following
+    fringe.push(start_node)   # initialize fringe with start node
+    if (problem.isGoal(problem.startingState())):   # check if start is goal
+        return
+    visited = []
+    while (fringe.__len__() != 0):   # while fringe not empty, traverse through graph
         curr_node = fringe.pop()
         curr_state = curr_node[0]
-        for child_node in problem.successorStates(curr_state):    # check each child
-            child_node = list(child_node)
-            child_state = child_node[0]
-            if problem.isGoal(child_state):  # if child state is goal, add child to visited
-                tuple_result = tuple(map(str, curr_node[1].split(' ')))
-                path_list = []
-                for i in tuple_result:
-                    if (i != ''):
-                        path_list.append(i)
-                path_list.append(child_node[1])
-                return path_list
-            else:                  # if child is not goal, append child if not seen before
+        if (problem.isGoal(curr_state)):   # if state is goal, return path list
+            tuple_result = tuple(map(str, curr_node[1].split(' ')))
+            path_list = []
+            for i in tuple_result:
+                if (i != ''):
+                    path_list.append(i)
+            return path_list
+        if (curr_state not in visited):   # if state is new:
+            visited.append(curr_state)    # add to visited nodes list
+            for child_node in problem.successorStates(curr_state):
+                child_state = child_node[0]
+                child_node = list(child_node)
                 if (child_state not in visited):   # if child is new:
-                    if (curr_node[1] != ''):
-                        new_path = str(curr_node[1])
-                        new_move = str(child_node[1])
-                        new_path += ' ' + new_move
-                        child_node[1] = new_path
-                    visited.append(child_state)
+                    new_path = str(curr_node[1])
+                    new_move = str(child_node[1])
+                    new_path += ' ' + new_move
+                    child_node[1] = new_path
                     fringe.push(child_node)   # push child to fringe
-    # raise NotImplementedError()
 
 def uniformCostSearch(problem):
     """
@@ -161,6 +159,7 @@ def aStarSearch(problem, heuristic):
                         child_node[1] = new_path
                     child_node[2] = child_node[2] + 1
                     visited.append(child_state)
-                    fringe.push(child_node, heuristic(child_state, problem) + child_node[2])   # push child to fringe
+                    # push child to fringe
+                    fringe.push(child_node, heuristic(child_state, problem) + child_node[2]) 
 
     raise NotImplementedError()

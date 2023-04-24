@@ -13,6 +13,8 @@ from pacai.core.search.position import PositionSearchProblem
 from pacai.core.search.problem import SearchProblem
 from pacai.agents.base import BaseAgent
 from pacai.agents.search.base import SearchAgent
+from pacai.core.directions import Directions
+
 
 class CornersProblem(SearchProblem):
     """
@@ -57,6 +59,7 @@ class CornersProblem(SearchProblem):
         self.startingPosition = startingGameState.getPacmanPosition()
         top = self.walls.getHeight() - 2
         right = self.walls.getWidth() - 2
+        self.cost = 1
 
         self.corners = ((1, 1), (1, top), (right, 1), (right, top))
         for corner in self.corners:
@@ -64,7 +67,10 @@ class CornersProblem(SearchProblem):
                 logging.warning('Warning: no food in corner ' + str(corner))
 
         # *** Your Code Here ***
-        raise NotImplementedError()
+
+        self.startState = (self.startingPosition, (0, 0, 0, 0))
+
+        #raise NotImplementedError()
 
     def actionsCost(self, actions):
         """
@@ -84,6 +90,57 @@ class CornersProblem(SearchProblem):
                 return 999999
 
         return len(actions)
+    
+    def startingState(self):
+        return self.startState
+        pass
+
+    def isGoal(self, state):
+        #if (self.goal == [1, 1, 1, 1])
+        if state[1] == (1, 1, 1, 1):
+            return True
+        else:
+            return False
+    
+        pass
+
+    def successorStates(self, state):
+        
+        successors = []
+        #print("inside successor function, node expansion count: ", SearchProblem.getExpandedCount(self))
+        for action in Directions.CARDINAL:
+            #print("in action loop, count: ", SearchProblem.getExpandedCount(self))
+            #print(state)
+            #print(state[0])
+            x, y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+
+            if (not hitsWall):
+                nextCoord = (nextx, nexty)
+                nextCorner = list(state[1])
+
+                if (nextCoord in self.corners):
+                   index = self.corners.index(nextCoord)
+                   nextCorner[index] = 1
+
+                cost = self.cost
+                nextState = (nextCoord, tuple(nextCorner))
+                successors.append((nextState, action, cost))
+
+
+        # Bookkeeping for display purposes (the highlight in the GUI).
+        self._numExpanded += 1
+        if (state[0] not in self._visitedLocations):
+            self._visitedLocations.add(state[0])
+            # Note: visit history requires coordinates not states. 
+            coordinates = state[0]
+            self._visitHistory.append(coordinates)
+
+        return successors
+        
+    
 
 def cornersHeuristic(state, problem):
     """
@@ -100,6 +157,7 @@ def cornersHeuristic(state, problem):
     # walls = problem.walls  # These are the walls of the maze, as a Grid.
 
     # *** Your Code Here ***
+
     return heuristic.null(state, problem)  # Default to trivial solution
 
 def foodHeuristic(state, problem):
