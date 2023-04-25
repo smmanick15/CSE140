@@ -33,23 +33,18 @@ def depthFirstSearch(problem):
         curr_node = fringe.pop()
         curr_state = curr_node[0]
         if (problem.isGoal(curr_state)):   # if state is goal, return path list
-            tuple_result = tuple(map(str, curr_node[1].split(' ')))
-            path_list = []
-            for i in tuple_result:
-                if (i != ''):
-                    path_list.append(i)
-            return path_list
+            return curr_node[1]
         if (curr_state not in visited):   # if state is new:
             visited.append(curr_state)    # add to visited nodes list
             for child_node in problem.successorStates(curr_state):
                 child_state = child_node[0]
                 child_node = list(child_node)
                 if (child_state not in visited):   # if child is new:
-                    if (curr_node[1] != ''):
-                        new_path = str(curr_node[1])
-                        new_move = str(child_node[1])
-                        new_path += ' ' + new_move
-                        child_node[1] = new_path
+                    action_str = child_node[1]     # update action path
+                    child_node[1] = []
+                    for act in curr_node[1]:
+                        child_node[1].append(act)
+                    child_node[1].append(action_str)
                     fringe.push(child_node)   # push child to fringe
 
 def breadthFirstSearch(problem):
@@ -57,8 +52,7 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first. [p 81]
     """
     # *** Your Code Here ***
-
-    start_node = (problem.startingState(), '', 0)
+    start_node = (problem.startingState(), [], 0)
     fringe = Queue()
     fringe.push(start_node)   # initialize fringe with start node
     if (problem.isGoal(problem.startingState())):   # check if start is goal
@@ -68,22 +62,18 @@ def breadthFirstSearch(problem):
         curr_node = fringe.pop()
         curr_state = curr_node[0]
         if (problem.isGoal(curr_state)):   # if state is goal, return path list
-            tuple_result = tuple(map(str, curr_node[1].split(' ')))
-            path_list = []
-            for i in tuple_result:
-                if (i != ''):
-                    path_list.append(i)
-            return path_list
+            return curr_node[1]
         if (curr_state not in visited):   # if state is new:
             visited.append(curr_state)    # add to visited nodes list
             for child_node in problem.successorStates(curr_state):
                 child_state = child_node[0]
                 child_node = list(child_node)
                 if (child_state not in visited):   # if child is new:
-                    new_path = str(curr_node[1])
-                    new_move = str(child_node[1])
-                    new_path += ' ' + new_move
-                    child_node[1] = new_path
+                    action_str = child_node[1]     # update action path
+                    child_node[1] = []
+                    for act in curr_node[1]:
+                        child_node[1].append(act)
+                    child_node[1].append(action_str)
                     fringe.push(child_node)   # push child to fringe
 
 def uniformCostSearch(problem):
@@ -91,9 +81,7 @@ def uniformCostSearch(problem):
     Search the node of least total cost first.
     """
 
-    # *** Your Code Here ***
-
-    start_node = (problem.startingState(), '', 0)
+    start_node = (problem.startingState(), [], 0)
     fringe = PriorityQueue()
     fringe.push(start_node, 1)   # initialize fringe with start node
     if (problem.isGoal(problem.startingState())):   # check if start is goal
@@ -103,24 +91,24 @@ def uniformCostSearch(problem):
         curr_node = fringe.pop()
         curr_state = curr_node[0]
         if (problem.isGoal(curr_state)):   # if state is goal, return path list
-            tuple_result = tuple(map(str, curr_node[1].split(' ')))
-            path_list = []
-            for i in tuple_result:
-                if (i != ''):
-                    path_list.append(i)
-            return path_list
+            return curr_node[1]
         if (curr_state not in visited):   # if state is new:
             visited.append(curr_state)    # add to visited nodes list
             for child_node in problem.successorStates(curr_state):
                 child_state = child_node[0]
                 child_node = list(child_node)
                 if (child_state not in visited):   # if child is new:
-                    new_path = str(curr_node[1])
-                    new_move = str(child_node[1])
-                    new_path += ' ' + new_move
-                    child_node[1] = new_path
-                    child_node[2] = child_node[2] + 1
-                    fringe.push(child_node, child_node[2])   # push child to fringe
+                    action_str = child_node[1]     # update action path
+                    child_node[1] = []
+                    for act in curr_node[1]:
+                        child_node[1].append(act)
+                    child_node[1].append(action_str)
+                    # calculate cost of path (use as fringe priority), push to fringe
+                    act_cost = problem.actionsCost(child_node[1])
+                    fringe.push(child_node, act_cost)   # push child to fringe
+
+    print("failed search")
+    return None
 
 
 def aStarSearch(problem, heuristic):
@@ -129,36 +117,35 @@ def aStarSearch(problem, heuristic):
     """
 
     # *** Your Code Here ***
-
-    start_node = (problem.startingState(), '', 0)
+    start_node = (problem.startingState(), [], problem.actionsCost([]))
     fringe = PriorityQueue()
-    fringe.push(start_node, 1)        # initialize queue with start node
-    visited = []          # initialize list to check whether states have been visited
-    visited.append(problem.startingState())   # initialize list with starting state
-    while not fringe.isEmpty():       # while fringe is not empty, do the following
+    # initialize fringe with start node
+    fringe.push(start_node, heuristic(problem.startingState(), problem))
+    if (problem.isGoal(problem.startingState())):   # check if start is goal
+        return
+    visited = []
+
+    while (fringe.__len__() != 0):   # while fringe not empty, traverse through graph
         curr_node = fringe.pop()
         curr_state = curr_node[0]
-        for child_node in problem.successorStates(curr_state):    # check each child
-            child_node = list(child_node)
-            child_state = child_node[0]
-            if problem.isGoal(child_state):  # if child state is goal, add child to visited
-                tuple_result = tuple(map(str, curr_node[1].split(' ')))
-                path_list = []
-                for i in tuple_result:
-                    if (i != ''):
-                        path_list.append(i)
-                path_list.append(child_node[1])
-                return path_list
-            else:                  # if child is not goal, append child if not seen before
+        if (problem.isGoal(curr_state)):   # if state is goal, return path list
+            return curr_node[1]
+        if (curr_state not in visited):   # if state is new:
+            visited.append(curr_state)    # add to visited nodes list
+            for child_node in problem.successorStates(curr_state):
+                child_state = child_node[0]
+                child_node = list(child_node)
                 if (child_state not in visited):   # if child is new:
-                    if (curr_node[1] != ''):
-                        new_path = str(curr_node[1])
-                        new_move = str(child_node[1])
-                        new_path += ' ' + new_move
-                        child_node[1] = new_path
-                    child_node[2] = child_node[2] + 1
-                    visited.append(child_state)
-                    # push child to fringe
-                    fringe.push(child_node, heuristic(child_state, problem) + child_node[2]) 
+                    action_str = child_node[1]      # update action path
+                    child_node[1] = []
+                    for act in curr_node[1]:
+                        child_node[1].append(act)
+                    child_node[1].append(action_str)
+                    # calculate cost of path (use as fringe priority), push to fringe
+                    act_cost = problem.actionsCost(child_node[1])
+                    fringe.push(child_node, act_cost + heuristic(child_state, problem))
+
+    print("failed search")
+    return None
 
     raise NotImplementedError()
